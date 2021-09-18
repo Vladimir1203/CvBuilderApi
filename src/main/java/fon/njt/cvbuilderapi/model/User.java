@@ -29,5 +29,5 @@ public class User {
     private Instant dateCreated;
     @Enumerated(EnumType.ORDINAL)
     private UserType userType;
-    private boolean enabled;
+    private boolean enabled; //da li je verifikovan mejl ili ne
 }

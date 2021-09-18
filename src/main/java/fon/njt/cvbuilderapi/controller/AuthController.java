@@ -32,7 +32,6 @@ public class AuthController {
 
     @PostMapping("login")
     public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
-        System.out.println("Usao u prvu metodu - login - na backu!");
         return authService.login(loginRequest);
     }
 
