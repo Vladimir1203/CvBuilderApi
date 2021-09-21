@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,7 +51,7 @@ public class AuthService {
         user.setName(registerRequest.getName());
         user.setSurname(registerRequest.getSurname());
         user.setUserType(UserType.REGULAR_USER);
-
+        user.setPremium(false);
         user = userRepository.save(user);
 
         String token = generateVerificationToken(user);
@@ -106,6 +107,8 @@ public class AuthService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with name - " + principal.getUsername()));
     }
 
+
+
     public boolean isLoggedIn() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
@@ -120,5 +123,30 @@ public class AuthService {
                 .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationMillis()))
                 .username(refreshTokenRequest.getUsername())
                 .build();
+    }
+
+    public String updateUser(User user) {
+        Optional<User> u = userRepository.findByUsername(user.getUsername());
+        User u1 = new User();
+        u1.setUserId(u.get().getUserId());
+        u1.setPremium(true);
+        u1.setEnabled(u.get().isEnabled());
+        u1.setEmail(u.get().getEmail());
+        u1.setAddress(u.get().getAddress());
+        u1.setUsername(u.get().getUsername());
+        u1.setUserType(u.get().getUserType());
+        u1.setPassword(u.get().getPassword());
+        u1.setName(u.get().getName());
+        u1.setSurname(u.get().getSurname());
+        //userRepository.setUserInfoById(true, u.get().getUserId());
+        userRepository.save(u1);
+        return "uspesno";
+    }
+
+    public boolean isUserPremium(User user) {
+        Optional<User> u = userRepository.findByUsername(user.getUsername());
+        if(u.get().isPremium())
+            return true;
+        return false;
     }
 }

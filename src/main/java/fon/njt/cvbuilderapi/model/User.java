@@ -30,4 +30,5 @@ public class User {
     @Enumerated(EnumType.ORDINAL)
     private UserType userType;
     private boolean enabled; //da li je verifikovan mejl ili ne
+    private boolean premium;
 }
