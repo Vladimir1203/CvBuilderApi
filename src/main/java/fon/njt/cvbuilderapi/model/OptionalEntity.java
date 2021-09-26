@@ -11,11 +11,13 @@ import javax.persistence.*;
 @Setter
 public class OptionalEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue()
     private Long optionalEntityId;
     private String optionalType;
     private String optionalColumn;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private OptionalTemplate optionalTemplate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "optionalTemplateId", name = "optionalTemplateId",
+            foreignKey = @ForeignKey(name = "optionalTemplateId_fk"))
+    private OptionalSection optionalSection;
 
 }

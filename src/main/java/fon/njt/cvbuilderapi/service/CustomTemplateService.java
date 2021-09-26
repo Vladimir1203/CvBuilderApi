@@ -2,13 +2,16 @@ package fon.njt.cvbuilderapi.service;
 
 import fon.njt.cvbuilderapi.exceptions.OptionalTemplateNotFoundException;
 import fon.njt.cvbuilderapi.model.OptionalEntity;
+import fon.njt.cvbuilderapi.model.OptionalSection;
 import fon.njt.cvbuilderapi.model.OptionalTemplate;
 import fon.njt.cvbuilderapi.repository.CustomTemplateRepository;
 import fon.njt.cvbuilderapi.repository.OptionalEntityRepository;
+import fon.njt.cvbuilderapi.repository.TemplateAllSectionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,56 +20,82 @@ public class CustomTemplateService {
 
     private final CustomTemplateRepository customTemplateRepository;
     private final OptionalEntityRepository optionalEntityRepository;
+    private final TemplateAllSectionsRepository templateAllSectionsRepository;
 
     @Autowired
-    public CustomTemplateService(CustomTemplateRepository customTemplateRepository, OptionalEntityRepository optionalEntityRepository) {
+    public CustomTemplateService(CustomTemplateRepository customTemplateRepository, OptionalEntityRepository optionalEntityRepository, TemplateAllSectionsRepository templateAllSectionsRepository) {
         this.customTemplateRepository = customTemplateRepository;
         this.optionalEntityRepository = optionalEntityRepository;
+        this.templateAllSectionsRepository = templateAllSectionsRepository;
     }
 
-    public OptionalTemplate findTemplateById(Long id) {
-        return (OptionalTemplate) customTemplateRepository.findByOptionalTemplateId(id)
+    public OptionalSection findTemplateById(Long id) {
+        return (OptionalSection) customTemplateRepository.findByOptionalTemplateId(id)
                 .orElseThrow(() -> new OptionalTemplateNotFoundException("Template by id " + id + " was not found"));
     }
 
-    public OptionalTemplate addTemplate(OptionalTemplate optionalTemplate) {
+    public OptionalSection addTemplate(OptionalSection optionalSection) {
 
-        customTemplateRepository.save(optionalTemplate);
-        for(int i = 0; i < optionalTemplate.getOptionals().size(); i++){
-            optionalEntityRepository.save(optionalTemplate.getOptionals().get(i));
+        customTemplateRepository.save(optionalSection);
+        for(int i = 0; i < optionalSection.getOptionals().size(); i++){
+            optionalEntityRepository.save(optionalSection.getOptionals().get(i));
         }
 
-        return optionalTemplate;
+        return optionalSection;
     }
 
-    public List<OptionalTemplate> addTemplateList(List<OptionalTemplate> optionalTemplate) {
-        for(int j = 0; j < optionalTemplate.size(); j++) {
-            OptionalTemplate optionalTemplate1 = customTemplateRepository.save(optionalTemplate.get(j));
-            for (int i = 0; i < optionalTemplate.get(j).getOptionals().size(); i++) {
-                OptionalTemplate ot = new OptionalTemplate();
-                optionalTemplate.get(j).getOptionals().get(i).setOptionalTemplate(ot);
-                optionalTemplate.get(j).getOptionals().get(i).getOptionalTemplate().setOptionalTemplateId(optionalTemplate1.getOptionalTemplateId());
-                optionalEntityRepository.save(optionalTemplate.get(j).getOptionals().get(i));
+    public List<OptionalSection> addTemplateList(List<OptionalSection> optionalSection) {
+        for(int j = 0; j < optionalSection.size(); j++) {
+            OptionalSection optionalSection1 = customTemplateRepository.save(optionalSection.get(j));
+            for (int i = 0; i < optionalSection.get(j).getOptionals().size(); i++) {
+                OptionalSection ot = new OptionalSection();
+                optionalSection.get(j).getOptionals().get(i).setOptionalSection(ot);
+                optionalSection.get(j).getOptionals().get(i).getOptionalSection().setOptionalTemplateId(optionalSection1.getOptionalTemplateId());
+                optionalEntityRepository.save(optionalSection.get(j).getOptionals().get(i));
             }
         }
 
-        return optionalTemplate;
+        return optionalSection;
     }
 
-    public OptionalTemplate updateTemplate(OptionalTemplate optionalTemplate) {
-        return customTemplateRepository.save(optionalTemplate);
+    public OptionalSection updateTemplate(OptionalSection optionalSection) {
+        return customTemplateRepository.save(optionalSection);
     }
 
     public void deleteTemplate(Long id) {
         customTemplateRepository.deleteByOptionalTemplateId(id);
     }
 
-    public List<OptionalTemplate> findAllTemplates() {
-        List<OptionalTemplate> optionalTemplates = customTemplateRepository.findAll();
-        for(int i = 0; i < optionalTemplates.size(); i++){
-            optionalTemplates.get(i).setOptionals(optionalEntityRepository.findByOptionalTemplate(optionalTemplates.get(i).getOptionalTemplateId()));
+    public List<OptionalSection> findAllTemplates() {
+        List<OptionalSection> optionalSections = customTemplateRepository.findAll();
+        List<OptionalEntity> optionalEntities  = optionalEntityRepository.findAll();
+
+        for(int i = 0; i < optionalSections.size(); i++){
+            List<OptionalEntity> optionals = new ArrayList<>();
+            for(int j = 0; j < optionalEntities.size(); j++){
+                if(optionalSections.get(i).getOptionalTemplateId() == optionalEntities.get(j).getOptionalSection().getOptionalTemplateId()){
+                    optionalEntities.get(j).getOptionalSection().setOptionals(new ArrayList<>());
+                    optionals.add(optionalEntities.get(j));
+                }
+            }
+            optionalSections.get(i).setOptionals(optionals);
         }
 
-        return optionalTemplates;
+        return optionalSections;
+    }
+
+    public OptionalTemplate addTemplateAllSections(OptionalTemplate template) {
+        OptionalTemplate templateNew = templateAllSectionsRepository.save(template);
+        for(int i = 0; i < template.getOptionalSections().size(); i++){
+            template.getOptionalSections().get(i).setOptionalTemplate(new OptionalTemplate());
+            template.getOptionalSections().get(i).getOptionalTemplate().setTemplateAllSectionsId(templateNew.getTemplateAllSectionsId());
+            OptionalSection optionalSection = customTemplateRepository.save(template.getOptionalSections().get(i));
+            for(int j = 0; j < template.getOptionalSections().get(i).getOptionals().size(); j++){
+                template.getOptionalSections().get(j).getOptionals().get(i).setOptionalSection(new OptionalSection());
+                template.getOptionalSections().get(j).getOptionals().get(i).getOptionalSection().setOptionalTemplateId(optionalSection.getOptionalTemplateId());
+                optionalEntityRepository.save(template.getOptionalSections().get(j).getOptionals().get(i));
+            }
+        }
+        return templateNew;
     }
 }

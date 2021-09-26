@@ -2,7 +2,6 @@ package fon.njt.cvbuilderapi.service;
 
 import fon.njt.cvbuilderapi.exceptions.OptionalTemplateNotFoundException;
 import fon.njt.cvbuilderapi.model.OptionalEntity;
-import fon.njt.cvbuilderapi.model.OptionalTemplate;
 import fon.njt.cvbuilderapi.repository.OptionalEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

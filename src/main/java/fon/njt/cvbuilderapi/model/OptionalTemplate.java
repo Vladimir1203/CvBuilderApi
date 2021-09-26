@@ -1,6 +1,9 @@
 package fon.njt.cvbuilderapi.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,10 +15,10 @@ import java.util.List;
 @Setter
 public class OptionalTemplate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long optionalTemplateId;
+    @GeneratedValue()
+    private Long templateAllSectionsId;
     private String name;
-    private boolean repeatable;
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<OptionalEntity> optionals;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<OptionalSection> optionalSections;
+
 }

@@ -11,5 +11,5 @@ public interface OptionalEntityRepository  extends JpaRepository<OptionalEntity,
     List<OptionalEntity> findAll();
     OptionalEntity save(OptionalEntity optionalEntity);
     <T> Optional<T> findByOptionalEntityId(Long id);
-    List<OptionalEntity> findByOptionalTemplateId(Long id);
+
 }
