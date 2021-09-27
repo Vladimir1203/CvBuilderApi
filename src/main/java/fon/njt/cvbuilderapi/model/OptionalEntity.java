@@ -15,9 +15,6 @@ public class OptionalEntity {
     private Long optionalEntityId;
     private String optionalType;
     private String optionalColumn;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "optionalTemplateId", name = "optionalTemplateId",
-            foreignKey = @ForeignKey(name = "optionalTemplateId_fk"))
-    private OptionalSection optionalSection;
-
+//    @OneToOne(fetch = FetchType.EAGER)
+//    private OptionalSection optionalSection;
 }

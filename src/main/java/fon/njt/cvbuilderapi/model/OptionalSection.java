@@ -16,11 +16,8 @@ public class OptionalSection {
     private Long optionalTemplateId;
     private String name;
     private boolean repeatable;
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "optionalTemplateId")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OptionalEntity> optionals;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(referencedColumnName = "templateAllSectionsId", name = "templateAllSectionsId",
-            foreignKey = @ForeignKey(name = "templateAllSectionsId_fk"))
-    private OptionalTemplate optionalTemplate;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    private OptionalTemplate optionalTemplate;
 }

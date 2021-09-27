@@ -18,7 +18,7 @@ public class OptionalTemplate {
     @GeneratedValue()
     private Long templateAllSectionsId;
     private String name;
-    @OneToMany(fetch = FetchType.EAGER)
+    private boolean hasPicture;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OptionalSection> optionalSections;
-
 }

@@ -145,8 +145,12 @@ public class AuthService {
 
     public boolean isUserPremium(User user) {
         Optional<User> u = userRepository.findByUsername(user.getUsername());
-        if(u.get().isPremium())
-            return true;
-        return false;
+        try{
+            if(u.get().isPremium())
+                return true;
+            return false;
+        }catch (Exception ex){
+            return false;
+        }
     }
 }
